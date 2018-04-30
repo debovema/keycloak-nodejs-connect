@@ -712,3 +712,47 @@ test('GrantManager#ensureFreshness should fetch new access token with client id 
       t.true(grant === JSON.stringify(refreshedToken));
     }).then(t.end);
 });
+
+test('GrantManager#validateToken returns undefined for an invalid token', (t) => {
+  const expiredToken = {
+    isExpired: () => true
+  };
+  const unsignedToken = {
+    isExpired: () => false,
+    signed: undefined
+  };
+  const notBeforeToken = {
+    isExpired: () => false,
+    signed: true,
+    content: { iat: -1 }
+  };
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-https.json');
+  const tokens = [
+    undefined,
+    expiredToken,
+    unsignedToken,
+    notBeforeToken
+  ];
+
+  /* jshint loopfunc:true */
+  for (const token of tokens) {
+    manager.validateToken(token)
+    .catch((err) => {
+      t.true(err instanceof Error, err.message);
+    });
+  }
+  t.end();
+});
+
+test('GrantManager#obtainFromCode should try to connect to a configurable host and port', (t) => {
+  const dockerManager = getManager('./test/fixtures/auth-utils/keycloak-docker.json');
+  const fakeRequest = {};
+  const fakeCode = 'a-fake-code';
+
+  dockerManager.obtainFromCode(fakeRequest, fakeCode)
+    .catch((err) => {
+      t.true(err instanceof Error, err.message);
+      t.equal(err.message, 'getaddrinfo ENOTFOUND somefakehost somefakehost:9090');
+    })
+    .then(t.end);
+});
