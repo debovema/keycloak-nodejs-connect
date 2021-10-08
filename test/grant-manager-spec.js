@@ -737,9 +737,9 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
   /* jshint loopfunc:true */
   for (const token of tokens) {
     manager.validateToken(token)
-    .catch((err) => {
-      t.true(err instanceof Error, err.message);
-    });
+      .catch((err) => {
+        t.true(err instanceof Error, err.message);
+      });
   }
   t.end();
 });

@@ -23,7 +23,10 @@ declare namespace KeycloakConnect {
     'resource': string
     'ssl-required': string
     'bearer-only'?: boolean
-    realm: string
+    realm: string,
+    'auth-server-host'?: string,
+    'auth-server-port'?: string,
+    'realm-public-key'?: string
   }
 
   interface KeycloakOptions {
